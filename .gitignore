@@ -5,10 +5,13 @@ venv/
 __pycache__/
 *.pyc
 
-# Data files (user-specific)
-data/
-input/
-output/
+# Data files (user-specific) - keep .gitkeep
+data/*
+!data/.gitkeep
+input/*
+!input/.gitkeep
+output/*
+!output/.gitkeep
 
 # IDE
 .idea/
