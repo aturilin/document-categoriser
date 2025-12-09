@@ -33,7 +33,8 @@ LLM-категоризатор документов. Автоматически 
 **Полезные ссылки:**
 - [The PARA Method](https://fortelabs.com/blog/para/) — оригинальная статья
 - [Building a Second Brain](https://www.buildingasecondbrain.com/) — книга и курс
-- [Obsidian](https://obsidian.md/) — редактор для работы с результатом
+
+> **Obsidian не обязателен.** Результат — обычные markdown-файлы. Работают в любом редакторе: VS Code, Typora, iA Writer, или просто в Finder/проводнике. [Obsidian](https://obsidian.md/) удобен для навигации по MOC-хабам и тегам, но это опционально.
 
 ---
 
