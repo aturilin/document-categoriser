@@ -1,19 +1,34 @@
 # Document Categorizer
 
-LLM-powered document categorizer that automatically organizes markdown files into [PARA](https://fortelabs.com/blog/para/) structure using Claude API.
+LLM-категоризатор документов. Автоматически раскладывает markdown-заметки по [PARA-структуре](https://fortelabs.com/blog/para/) с помощью Claude API.
 
-## Features
+---
 
-- **AI-Powered Classification**: Uses Claude to analyze content and categorize documents
-- **PARA Methodology**: Organizes into Areas, Resources, and Archive
-- **Automatic Frontmatter**: Adds metadata (category, tags, summary) to each file
-- **Checkpointing**: Resume processing from where you left off
-- **MOC Generation**: Creates Map of Content hub files for navigation
-- **Dry Run Mode**: Test without making changes
+## Что нужно для работы
 
-## Quick Start
+| Требование | Где взять |
+|------------|-----------|
+| **Python 3.9+** | `brew install python` или [python.org](https://python.org) |
+| **Anthropic API Key** | [console.anthropic.com](https://console.anthropic.com/) → API Keys |
+| **Markdown-файлы** | Экспорт из Evernote, Notion, или любые `.md` файлы |
 
-### 1. Clone and Setup
+### Про документы
+
+**Если у вас Evernote:**
+- Экспортируйте заметки через File → Export → HTML (или ENEX)
+- Конвертируйте в Markdown (например, через [evernote2md](https://github.com/wormi4ok/evernote2md))
+- Положите `.md` файлы в папку `input/`
+
+**Если у вас Obsidian:**
+- Просто скопируйте vault в `input/`
+- После категоризации можно открыть `output/` как новый vault
+- MOC-файлы (`_MOC/`) будут работать как навигационные хабы
+
+---
+
+## Быстрый старт
+
+### 1. Клонировать и установить
 
 ```bash
 git clone https://github.com/aturilin/document-categoriser.git
@@ -21,166 +36,164 @@ cd document-categoriser
 pip install -r requirements.txt
 ```
 
-### 2. Add Your API Key
+### 2. Добавить API ключ
 
 ```bash
-echo 'ANTHROPIC_API_KEY=sk-ant-your-key-here' > .env
+echo 'ANTHROPIC_API_KEY=sk-ant-ваш-ключ' > .env
 ```
 
-Get your API key from [console.anthropic.com](https://console.anthropic.com/)
+Ключ берём тут: [console.anthropic.com](https://console.anthropic.com/) → API Keys
 
-### 3. Add Your Documents
+### 3. Положить документы
 
 ```bash
-mkdir -p input
-cp /path/to/your/notes/*.md input/
+cp /путь/к/вашим/заметкам/*.md input/
 ```
 
-### 4. Run Categorizer
+### 4. Запустить
 
 ```bash
-# Test with 5 files first (dry run)
+# Сначала тест (ничего не меняет)
 python3 categorize.py --dry-run --limit 5
 
-# Process 10 files for real
+# Обработать 10 файлов
 python3 categorize.py --limit 10
 
-# Process all files
+# Обработать всё
 python3 categorize.py
 
-# Resume if interrupted
+# Продолжить если прервалось
 python3 categorize.py --resume
 ```
 
-### 5. Build Index and MOC
+### 5. Построить индекс и навигацию
 
 ```bash
-# Build searchable index
-python3 build_index.py
-
-# Generate navigation hubs
-python3 generate_moc.py
+python3 build_index.py      # индекс для поиска
+python3 generate_moc.py     # MOC-хабы для навигации
 ```
 
-## Directory Structure
+---
+
+## Структура папок
 
 ```
 document-categoriser/
-├── input/                    # Put your markdown files here
-├── output/                   # Categorized files appear here
-│   ├── areas/
-│   │   ├── health/
-│   │   ├── finance/
-│   │   ├── career/
-│   │   └── family/
-│   ├── resources/
-│   │   ├── data-science/
-│   │   ├── programming/
-│   │   ├── business/
-│   │   └── personal-dev/
-│   ├── archive/
-│   │   ├── old-projects/
-│   │   ├── completed/
+├── input/                    # Сюда кладёте файлы
+├── output/                   # Тут появятся отсортированные
+│   ├── areas/               # Текущие сферы жизни
+│   │   ├── health/          # здоровье
+│   │   ├── finance/         # финансы
+│   │   ├── career/          # карьера
+│   │   └── family/          # семья
+│   ├── resources/           # Справочные материалы
+│   │   ├── data-science/    # ML, аналитика
+│   │   ├── programming/     # код
+│   │   ├── business/        # бизнес
+│   │   └── personal-dev/    # саморазвитие
+│   ├── archive/             # Неактуальное
 │   │   └── outdated/
-│   └── _MOC/                 # Generated navigation hubs
-├── data/                     # Index, stats, checkpoints
-├── categorize.py             # Main categorizer
-├── build_index.py            # Index builder
-├── generate_moc.py           # MOC generator
-└── requirements.txt
+│   └── _MOC/                # Навигационные хабы
+├── data/                    # Индекс, статистика, чекпоинты
+└── *.py                     # Скрипты
 ```
 
-## PARA Categories
+---
 
-| Category | Description | Subcategories |
-|----------|-------------|---------------|
-| **areas** | Ongoing responsibilities | health, finance, career, family |
-| **resources** | Reference material | data-science, programming, business, personal-dev |
-| **archive** | Completed/outdated | old-projects, completed, outdated |
+## Категории PARA
 
-## Customization
+| Категория | Описание | Примеры |
+|-----------|----------|---------|
+| **areas** | Текущие сферы жизни | здоровье, финансы, карьера, семья |
+| **resources** | Справочник на потом | программирование, книги, бизнес |
+| **archive** | Завершённое/устаревшее | старые проекты, неактуальное |
 
-### Change Categories
+---
 
-Edit `CATEGORIES` dict in `categorize.py`:
-
-```python
-CATEGORIES = {
-    "areas": ["health", "finance", "career", "family", "your-area"],
-    "resources": ["programming", "your-resource"],
-    "archive": ["outdated"],
-}
-```
-
-### Change Prompt
-
-Edit `CLASSIFICATION_PROMPT_TEMPLATE` in `categorize.py` to adjust classification rules.
-
-### Use Different Model
-
-```python
-CONFIG = {
-    "model": "claude-3-haiku-20240307",  # Cheaper, faster
-    # or
-    "model": "claude-sonnet-4-20250514",  # Better quality
-}
-```
-
-## Commands Reference
+## Команды
 
 ### categorize.py
 
 ```bash
-python3 categorize.py [options]
+python3 categorize.py [опции]
 
-Options:
-  --dry-run     Test without changes
-  --limit N     Process only N files
-  --resume      Continue from checkpoint
+--dry-run     Тест без изменений
+--limit N     Обработать только N файлов
+--resume      Продолжить с чекпоинта
 ```
 
 ### build_index.py
 
 ```bash
-python3 build_index.py [options]
+python3 build_index.py [опции]
 
-Options:
-  --stats       Show statistics only (no file write)
+--stats       Только статистика (не писать файл)
 ```
 
 ### generate_moc.py
 
 ```bash
-python3 generate_moc.py [options]
+python3 generate_moc.py [опции]
 
-Options:
-  --preview     Show preview without writing files
+--preview     Превью без записи файлов
 ```
 
-## Example Output
+---
 
-After processing, a file gets frontmatter:
+## Что получается
+
+После обработки файл получает frontmatter:
 
 ```markdown
 ---
-title: "Python Machine Learning Notes"
+title: "Заметки по Python ML"
 category: resources
 subcategory: data-science
 tags: ["machine-learning", "python", "sklearn"]
-summary: "Notes on ML algorithms and scikit-learn usage"
+summary: "Конспект по алгоритмам ML"
 processed: 2025-01-15
 ---
 
-# Original content here...
+# Оригинальный контент...
 ```
 
-## Cost Estimation
+---
 
-- Claude Sonnet: ~$0.003 per document (4K tokens avg)
-- Claude Haiku: ~$0.0003 per document
+## Стоимость
 
-For 1000 documents: ~$3 (Sonnet) or ~$0.30 (Haiku)
+| Модель | За документ | За 1000 документов |
+|--------|-------------|-------------------|
+| Claude Sonnet | ~$0.003 | ~$3 |
+| Claude Haiku | ~$0.0003 | ~$0.30 |
 
-## License
+---
+
+## Настройка
+
+### Изменить категории
+
+Редактируйте `CATEGORIES` в `categorize.py`:
+
+```python
+CATEGORIES = {
+    "areas": ["health", "finance", "career", "family"],
+    "resources": ["programming", "business"],
+    "archive": ["outdated"],
+}
+```
+
+### Сменить модель
+
+```python
+CONFIG = {
+    "model": "claude-3-haiku-20240307",  # дешевле, быстрее
+    # или
+    "model": "claude-sonnet-4-20250514",  # качественнее
+}
+```
+
+---
+
+## Лицензия
 
 MIT
